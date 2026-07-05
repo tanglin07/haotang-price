@@ -34,6 +34,18 @@ npm start                   # 啟動網站（http://localhost:3000）+ 每日排
 
 所有 K 值、扣項、閾值、排程時間都在 `config.json`，改完重啟 `npm start` 生效，無需改程式碼。
 
-## 部署注意
+## 部署（GitHub Pages，已上線）
 
-需要常駐執行的環境（小型 VPS 或不會休眠的 PaaS），否則 cron 排程不會觸發。
+- **正式網址**：https://tanglin07.github.io/haotang-price/
+- **部署 repo**：https://github.com/tanglin07/haotang-price（公開；本目錄為開發主拷貝，改版後需同步推送過去）
+- **自動更新**：GitHub Actions（`.github/workflows/update-prices.yml`）每日台北時間 07:00 與 09:00
+  執行 `npm run build-static`：抓價 → 計價 → 產生 `docs/`（靜態頁 + prices-latest.json + quote.pdf）→ 自動 commit，Pages 隨即重新發布
+- **手動更新價格**：到部署 repo 的 Actions 分頁 → 「每日更新報價」→ Run workflow（手機 GitHub App 也可操作）；
+  網頁上的「更新價格」按鈕僅在伺服器模式（本機/VPS）顯示，靜態版自動隱藏
+- **前一日沿用**：`data/prices-latest.json` 有進版控，作為隔日建置時「沿用前日」防呆的依據
+- **自訂網域（選配）**：買網域後在部署 repo Settings → Pages 設定 custom domain 即可，不買也能用上述網址
+
+### 伺服器模式（替代方案）
+
+`npm start` 可在常駐環境（小型 VPS）跑完整伺服器版：內建 node-cron 排程、
+「更新價格」按鈕即時重抓、PDF 即時產生。
