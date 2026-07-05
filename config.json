@@ -1,0 +1,43 @@
+{
+  "// 說明": "所有可調參數集中於此，修改後無需改程式碼",
+  "params": {
+    "K_alu_bone": 0.95,
+    "K_turbid_ratio": 0.84,
+    "K_scrap_6head": 0.65,
+    "K_scrap_mixed": 0.58,
+    "baotai_factor": 0.8,
+    "baotai_deduct": 700,
+    "baotai_loss": 10,
+    "quote_deduct": 5
+  },
+  "fx": {
+    "// 說明": "匯率口徑：spot_sell = 台銀「即期賣出」（浩堂 2026-07-05 確認），spot_buy = 即期買入",
+    "rate_type": "spot_sell"
+  },
+  "thresholds": {
+    "// 說明": "防呆用：抓取值合理區間 + 日波動警示%",
+    "lme_min": 1500,
+    "lme_max": 6000,
+    "usd_min": 25,
+    "usd_max": 38,
+    "cny_min": 3.8,
+    "cny_max": 5.2,
+    "baotai_min": 10000,
+    "baotai_max": 30000,
+    "daily_change_alert_pct": 8
+  },
+  "schedule": {
+    "daily_hour": 7,
+    "finalize_hour": 23,
+    "retry_interval_min": 60,
+    "timezone": "Asia/Taipei"
+  },
+  "server": {
+    "port": 3000
+  },
+  "contact": {
+    "// 說明": "聯絡方式：報價單 PDF 使用此處資料；網頁頁尾在 public/index.html，改號碼兩處都要改",
+    "label": "電話／LINE",
+    "phones": ["0910-420-956", "0933-295-454"]
+  }
+}

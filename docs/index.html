@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>浩堂｜廢鋁每日收購報價</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- 中文內文 Noto Sans TC；價格數字用 Barlow Condensed（載入失敗自動退回系統字體） -->
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <h1>浩堂</h1>
+      <p class="brand-sub">廢鋁每日收購報價</p>
+    </div>
+  </header>
+
+  <main>
+    <div class="board-head">
+      <div class="board-top">
+        <p id="updated" class="updated">載入中…</p>
+        <div class="actions">
+          <button id="btn-refresh" class="btn" type="button">更新價格</button>
+          <a id="btn-pdf" class="btn btn-primary" href="/api/quote.pdf" download>下載報價單 PDF</a>
+        </div>
+      </div>
+      <p class="board-labels" aria-hidden="true">
+        <span class="lab-buy">收購價 <i>元/kg</i></span>
+        <span class="lab-quote">報價 <i>元/kg</i></span>
+      </p>
+    </div>
+
+    <ul id="price-list" class="price-list" hidden></ul>
+
+    <!-- 行情依據：低調小字，不干擾報價主表 -->
+    <p id="basis" class="basis" hidden></p>
+
+    <p id="error" class="error" hidden></p>
+  </main>
+
+  <footer>
+    <!-- 聯絡方式：手機點號碼可直接撥打 -->
+    <div class="contact">
+      <p class="contact-title">聯絡我們</p>
+      <p class="contact-line">
+        電話／LINE：
+        <a href="tel:0910420956">0910-420-956</a>
+        <span class="contact-sep">・</span>
+        <a href="tel:0933295454">0933-295-454</a>
+      </p>
+    </div>
+    <p>本表價格僅供參考，實際收購價以現場過磅與當日確認為準。<br>
+    價格依 LME 國際鋁價、匯率及市場行情每日變動。</p>
+  </footer>
+
+  <script>
+    // 各品項對應照片（public/images/，來源與授權見 images/CREDITS.txt）
+    const ITEM_IMG = {
+      "鋁骨": "images/item-alu-bone.jpg",
+      "濁鋁骨": "images/item-turbid.jpg",
+      "6頭鋁屑": "images/item-6head.jpg",
+      "混合鋁屑": "images/item-mixed.jpg",
+      "生鋁屑": "images/item-raw.jpg"
+    };
+
+    // 讀取 /api/prices 並渲染報價列表與行情依據列
+    async function loadPrices() {
+      const updated = document.getElementById("updated");
+      const list = document.getElementById("price-list");
+      const basis = document.getElementById("basis");
+      const errEl = document.getElementById("error");
+      try {
+        // 先嘗試伺服器 API（本機/VPS 部署）；失敗改讀靜態 JSON（GitHub Pages 部署）
+        let data = null;
+        try {
+          const resp = await fetch("/api/prices");
+          if (!resp.ok) throw new Error("api unavailable");
+          data = await resp.json();
+        } catch {
+          const resp2 = await fetch("prices-latest.json");
+          if (!resp2.ok) throw new Error("尚無報價資料");
+          data = await resp2.json();
+          // 靜態版：無伺服器可即時重抓，隱藏更新按鈕；PDF 改讀預先產生的檔案
+          document.getElementById("btn-refresh").hidden = true;
+          document.getElementById("btn-pdf").href = "quote.pdf";
+        }
+
+        // 更新時間（台灣時間）
+        const dt = new Date(data.updatedAt);
+        const pad = (n) => String(n).padStart(2, "0");
+        updated.innerHTML = `<span class="dot" aria-hidden="true"></span>最後更新 ${data.fetchDate}　${pad(dt.getHours())}:${pad(dt.getMinutes())}`;
+
+        // 渲染五品項；flag 有值（如「前日參考價」）時淡黃底標註
+        list.innerHTML = "";
+        data.items.forEach((item, i) => {
+          const li = document.createElement("li");
+          li.style.setProperty("--row-i", i);
+          if (item.flag) li.className = "stale";
+          const img = ITEM_IMG[item.name];
+          const photo = img
+            ? `<img class="thumb" src="${img}" alt="${item.name}實物照片" loading="lazy" onerror="this.classList.add('broken')">`
+            : `<span class="thumb thumb-empty" aria-hidden="true"></span>`;
+          const flagNote = item.flag ? `<span class="flag">⚠ ${item.flag}</span>` : "";
+          li.innerHTML = `
+            ${photo}
+            <span class="name">${item.name}${flagNote}</span>
+            <span class="price buy"><i class="m-label">收購價</i>${item.buy.toFixed(2)}</span>
+            <span class="price quote"><i class="m-label">報價</i>${item.quote.toFixed(2)}</span>`;
+          list.appendChild(li);
+        });
+        list.hidden = false;
+
+        // 行情依據：LME 3M + 兩個匯率（台銀即期賣出）
+        if (data.inputs) {
+          const lmeTxt = Number(data.inputs.lme).toLocaleString("en-US");
+          basis.innerHTML =
+            `今日行情依據&ensp;`
+            + `<span class="basis-item">LME 鋁 3 個月 <b>${lmeTxt}</b> 美元/噸</span>`
+            + `<span class="basis-sep">｜</span>`
+            + `<span class="basis-item">美元 <b>${Number(data.inputs.usd).toFixed(2)}</b></span>`
+            + `<span class="basis-sep">｜</span>`
+            + `<span class="basis-item">人民幣 <b>${Number(data.inputs.cny).toFixed(2)}</b></span>`
+            + `<span class="basis-note">（匯率為台銀即期賣出）</span>`;
+          basis.hidden = false;
+        }
+      } catch (e) {
+        updated.textContent = "";
+        errEl.textContent = "目前尚無報價資料，請稍後再試。";
+        errEl.hidden = false;
+      }
+    }
+    loadPrices();
+
+    // 更新價格按鈕：呼叫 /api/refresh 重新抓取最新資料後重新渲染
+    const btnRefresh = document.getElementById("btn-refresh");
+    btnRefresh.addEventListener("click", async () => {
+      const orig = btnRefresh.textContent;
+      btnRefresh.disabled = true;
+      btnRefresh.textContent = "更新中…";
+      try {
+        const r = await fetch("/api/refresh", { method: "POST" });
+        if (!r.ok) {
+          const d = await r.json().catch(() => ({}));
+          throw new Error(d.error || "更新失敗，請稍後再試");
+        }
+        await loadPrices();
+        btnRefresh.textContent = "已更新 ✓";
+        setTimeout(() => {
+          btnRefresh.textContent = orig;
+          btnRefresh.disabled = false;
+        }, 1800);
+      } catch (e) {
+        btnRefresh.textContent = orig;
+        btnRefresh.disabled = false;
+        alert(e.message);
+      }
+    });
+  </script>
+</body>
+</html>

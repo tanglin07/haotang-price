@@ -1,0 +1,427 @@
+/* 浩堂廢鋁報價 — 簡約現代（參考大畑商事：品項照片＋品名＋價格的清單式報價）
+   白底、大量留白、細邊框卡片、單一橙色點綴；價格為視覺主角，現場手機閱讀優先 */
+
+:root {
+  --ink: #1c2126;        /* 主文字 */
+  --steel: #66727c;      /* 次要文字 */
+  --faint: #97a2ab;      /* 弱化文字 */
+  --bg: #f7f8f9;         /* 頁面底色：近白 */
+  --card: #ffffff;
+  --line: #e9edf0;       /* 細分隔線 */
+  --accent: #e07a24;     /* 唯一點綴色（品牌橙） */
+  --stale-bg: #fff8dd;   /* 沿用前日：淡黃底 */
+  --stale-ink: #8a6d00;
+  --num-font: "Barlow Condensed", "Arial Narrow", sans-serif;
+  --tc-font: "Noto Sans TC", "Microsoft JhengHei", "PingFang TC", sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--tc-font);
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== 頁首：白底極簡 ===== */
+header {
+  background: var(--card);
+  border-bottom: 1px solid var(--line);
+}
+
+.brand {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 22px 20px;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+/* 品牌記號：橙色小方塊 */
+.brand-mark {
+  width: 12px;
+  height: 12px;
+  background: var(--accent);
+  align-self: center;
+  flex: none;
+}
+
+header h1 {
+  font-size: 1.65rem;
+  font-weight: 900;
+  letter-spacing: 0.28em;
+}
+
+.brand-sub {
+  margin-left: auto;
+  font-size: 0.9rem;
+  color: var(--steel);
+  letter-spacing: 0.12em;
+}
+
+/* ===== 主內容 ===== */
+main {
+  flex: 1;
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 28px 16px 8px;
+}
+
+.board-head {
+  padding: 0 6px 12px;
+}
+
+.board-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+/* ===== 操作按鈕：更新價格 / 下載報價單 PDF ===== */
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn {
+  font-family: var(--tc-font);
+  font-size: 0.88rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--steel);
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 8px 14px;
+  cursor: pointer;
+  text-decoration: none;
+  line-height: 1;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+
+.btn:hover,
+.btn:focus-visible {
+  border-color: var(--steel);
+  color: var(--ink);
+}
+
+.btn:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.btn-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.btn-primary:hover,
+.btn-primary:focus-visible {
+  background: #c96a1a;
+  border-color: #c96a1a;
+  color: #fff;
+}
+
+.updated {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: var(--steel);
+  letter-spacing: 0.04em;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex: none;
+}
+
+/* 欄位標籤（對齊右側兩個價格欄） */
+.board-labels {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;           /* 與清單列的欄距一致 */
+  padding-right: 14px; /* 補清單列右內距差，使標籤與數字右緣對齊 */
+  font-size: 0.8rem;
+  color: var(--faint);
+  letter-spacing: 0.08em;
+}
+
+.board-labels i {
+  font-style: normal;
+  font-size: 0.7rem;
+  margin-left: 2px;
+}
+
+.lab-buy {
+  width: 118px;
+  text-align: right;
+}
+
+.lab-quote {
+  width: 96px;
+  text-align: right;
+}
+
+/* ===== 報價清單：照片＋品名＋收購價＋報價 ===== */
+.price-list {
+  list-style: none;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(28, 33, 38, 0.04), 0 8px 24px rgba(28, 33, 38, 0.05);
+}
+
+.price-list li {
+  display: grid;
+  grid-template-columns: 88px 1fr 118px 96px;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 20px 14px 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.price-list li:last-child {
+  border-bottom: none;
+}
+
+/* 品項照片：圓角縮圖 */
+.thumb {
+  width: 88px;
+  height: 66px;
+  object-fit: cover;
+  border-radius: 10px;
+  display: block;
+  background: var(--line);
+}
+
+.thumb.broken {
+  visibility: hidden; /* 圖片載入失敗時保留版位不破版 */
+}
+
+.name {
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+/* 價格：等寬壓縮數字；收購價為主角 */
+.price {
+  font-family: var(--num-font);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.price.buy {
+  font-size: 2.1rem;
+  font-weight: 600;
+}
+
+.price.quote {
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: var(--steel);
+}
+
+/* 手機用的小標籤（桌面隱藏，改由表頭欄位標籤呈現） */
+.m-label {
+  display: none;
+}
+
+/* 列進場：由下淡入（尊重減少動態偏好） */
+@media (prefers-reduced-motion: no-preference) {
+  .price-list li {
+    animation: row-in 0.4s ease-out both;
+    animation-delay: calc(var(--row-i, 0) * 55ms);
+  }
+  @keyframes row-in {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: none; }
+  }
+}
+
+/* 沿用前日資料的品項：淡黃底 + 警示小字 */
+.price-list li.stale {
+  background: var(--stale-bg);
+}
+
+.flag {
+  display: block;
+  font-size: 0.76rem;
+  font-weight: 400;
+  color: var(--stale-ink);
+  margin-top: 3px;
+}
+
+/* ===== 行情依據列：低調小字 ===== */
+.basis {
+  margin-top: 16px;
+  text-align: center;
+  font-size: 0.82rem;
+  color: var(--faint);
+  letter-spacing: 0.03em;
+  line-height: 1.9;
+}
+
+.basis b {
+  font-family: var(--num-font);
+  font-size: 0.98rem;
+  font-weight: 600;
+  color: var(--steel);
+}
+
+.basis-item {
+  white-space: nowrap;
+  margin: 0 3px;
+}
+
+.basis-sep {
+  color: #ccd3d9;
+  margin: 0 2px;
+}
+
+.basis-note {
+  display: inline-block;
+  color: var(--faint);
+}
+
+.error {
+  text-align: center;
+  color: #a33;
+  font-size: 1.1rem;
+  padding: 48px 0;
+}
+
+/* ===== 頁尾：聯絡方式 + 免責 ===== */
+footer {
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--faint);
+  line-height: 1.8;
+  padding: 24px 16px 32px;
+}
+
+.contact {
+  max-width: 720px;
+  margin: 0 auto 18px;
+  padding: 16px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+
+.contact-title {
+  font-size: 0.82rem;
+  letter-spacing: 0.3em;
+  text-indent: 0.3em;
+  color: var(--faint);
+  margin-bottom: 4px;
+}
+
+.contact-line {
+  font-size: 1.02rem;
+  color: var(--steel);
+  letter-spacing: 0.04em;
+}
+
+/* 電話號碼：可點擊撥打，數字用等寬字體、橙色點綴 */
+.contact-line a {
+  font-family: var(--num-font);
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.contact-line a:hover,
+.contact-line a:focus-visible {
+  text-decoration: underline;
+  outline-offset: 3px;
+}
+
+.contact-sep {
+  color: var(--line);
+  margin: 0 6px;
+}
+
+/* ===== 手機（現場主要使用情境）===== */
+@media (max-width: 560px) {
+  main {
+    padding-top: 20px;
+  }
+  .board-labels {
+    display: none; /* 小螢幕改在每列內顯示小標籤 */
+  }
+  .price-list li {
+    grid-template-columns: 64px 1fr auto;
+    grid-template-areas:
+      "photo name  buy"
+      "photo quote buy";
+    row-gap: 2px;
+    gap: 12px;
+    padding: 12px 14px 12px 12px;
+  }
+  .thumb {
+    grid-area: photo;
+    width: 64px;
+    height: 64px;
+    border-radius: 10px;
+  }
+  .name {
+    grid-area: name;
+    font-size: 1.05rem;
+    align-self: end;
+  }
+  .price.buy {
+    grid-area: buy;
+    font-size: 2rem;
+    align-self: center;
+  }
+  .price.quote {
+    grid-area: quote;
+    font-size: 1.05rem;
+    text-align: left;
+    align-self: start;
+  }
+  /* 手機顯示小標籤區分兩個價格 */
+  .m-label {
+    display: inline;
+    font-style: normal;
+    font-family: var(--tc-font);
+    font-size: 0.7rem;
+    color: var(--faint);
+    margin-right: 6px;
+    letter-spacing: 0.08em;
+  }
+  .price.buy .m-label {
+    display: block;
+    text-align: right;
+    margin: 0 0 3px;
+  }
+  .basis-sep {
+    display: none; /* 小螢幕以項目換行取代分隔線 */
+  }
+  .basis-note {
+    display: block;
+  }
+}

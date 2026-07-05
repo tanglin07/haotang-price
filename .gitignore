@@ -1,0 +1,6 @@
+node_modules/
+.env
+data/history.sqlite
+data/partial-today.json
+# 注意：data/prices-latest.json 需進版控——GitHub Actions 每日建置時
+# 以它作為「前一日資料」（沿用前日防呆依據），並由 workflow 自動回寫

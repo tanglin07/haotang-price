@@ -1,0 +1,43 @@
+# 每日自動更新報價並部署 GitHub Pages（docs/）
+# 排程時間為 UTC：23:00 UTC = 台北 07:00、01:00 UTC = 台北 09:00（補抓一次保險）
+# 也可在 GitHub 網頁 Actions 分頁手動觸發（Run workflow）＝「手動更新價格」
+name: 每日更新報價
+
+on:
+  schedule:
+    - cron: "0 23 * * *"
+    - cron: "0 1 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: 安裝依賴
+        run: npm ci
+
+      - name: 抓取最新價格並建置靜態頁
+        run: node scripts/build-static.js
+        env:
+          METALS_DEV_KEY: ${{ secrets.METALS_DEV_KEY }}
+
+      - name: 提交更新
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs data/prices-latest.json
+          if git diff --cached --quiet; then
+            echo "無變更，略過提交"
+          else
+            git commit -m "自動更新報價 $(TZ=Asia/Taipei date +'%Y-%m-%d %H:%M')"
+            git push
+          fi
