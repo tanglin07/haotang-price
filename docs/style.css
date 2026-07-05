@@ -45,11 +45,10 @@ header {
   gap: 12px;
 }
 
-/* 品牌記號：橙色小方塊 */
-.brand-mark {
-  width: 12px;
-  height: 12px;
-  background: var(--accent);
+/* 公司 LOGO（已去背 PNG） */
+.brand-logo {
+  height: 46px;
+  width: auto;
   align-self: center;
   flex: none;
 }
