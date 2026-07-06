@@ -51,6 +51,28 @@ async function fetchBaotaiFromWeb() {
   return { value: today, date: dateTxt, source: "baotai", unit: "CNY/t" };
 }
 
+// Jina Reader 代理備援：寶泰為中國站點，GitHub Actions 等雲端主機常連不上，
+// 透過 r.jina.ai 中轉取得文字版再解析
+// 文字版結構：日期單獨一行（2026-07-04），其後非空行依序為 说明、今日价格、昨日价格…
+async function fetchBaotaiViaJina() {
+  const url = "https://r.jina.ai/https://www.baotaigroup.com.cn/index/offer/hoffer/id/97.html";
+  const { data: text } = await axios.get(url, {
+    timeout: 60000,
+    responseType: "text",
+    headers: { "User-Agent": "Mozilla/5.0", "X-Return-Format": "markdown" }
+  });
+  const lines = String(text).split(/\r?\n/).map((l) => l.trim()).filter((l) => l !== "");
+  for (let i = 0; i < lines.length; i++) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(lines[i])) continue;
+    // lines[i+1]=说明、lines[i+2]=今日价格（格式如 **19200**）
+    const price = Number((lines[i + 2] || "").replace(/[^\d.]/g, ""));
+    if (Number.isFinite(price) && price > 0) {
+      return { value: price, date: lines[i], source: "baotai-jina", unit: "CNY/t" };
+    }
+  }
+  throw new Error("Jina 代理內容解析失敗（找不到日期+价格區塊）");
+}
+
 // 人工輸入備援：讀 data/manual-baotai.json { "value": 19200, "date": "2026-07-04" }
 function readManualBaotai() {
   if (!fs.existsSync(MANUAL_FILE)) throw new Error("無人工輸入檔 manual-baotai.json");
@@ -66,14 +88,19 @@ function readManualBaotai() {
   };
 }
 
-// 對外介面：網頁抓取失敗 → 讀人工輸入檔
+// 對外介面：直連 → Jina 代理 → 人工輸入檔
 async function fetchBaotai() {
   try {
     return await fetchBaotaiFromWeb();
   } catch (e) {
-    console.warn("[寶泰] 網頁抓取失敗，改讀人工輸入：", e.message);
+    console.warn("[寶泰] 直連失敗，改走 Jina 代理：", e.message);
+  }
+  try {
+    return await fetchBaotaiViaJina();
+  } catch (e) {
+    console.warn("[寶泰] Jina 代理失敗，改讀人工輸入：", e.message);
     return readManualBaotai();
   }
 }
 
-module.exports = { fetchBaotai, fetchBaotaiFromWeb, readManualBaotai };
+module.exports = { fetchBaotai, fetchBaotaiFromWeb, fetchBaotaiViaJina, readManualBaotai };
