@@ -55,10 +55,37 @@ async function fetchLmeFromWestmetall(attempt = 1) {
   return { value, date: dateTxt, source: "westmetall", unit: "USD/t" };
 }
 
+// Jina Reader 代理備援：Westmetall 會擋雲端機房 IP（實測 GitHub Actions 直連必逾時），
+// 透過 r.jina.ai 中轉取得頁面文字版，再解析表格第一列的三個數字（cash | 3-month | stock）
+async function fetchLmeFromWestmetallViaJina() {
+  const url = "https://r.jina.ai/https://www.westmetall.com/en/markdaten.php?action=table&field=LME_Al_cash";
+  const { data: text } = await axios.get(url, {
+    timeout: 60000,
+    responseType: "text",
+    headers: { "User-Agent": "Mozilla/5.0", "X-Return-Format": "markdown" }
+  });
+  // Markdown 表格列格式：| 03. July 2026 | 3,080.00 | 3,087.00 | 298,775 |
+  // 欄序與原網頁相同：日期 | cash | 3-month | stock → 取日期欄後第 2 欄
+  // 注意：不可對整行抓數字（日期中的年份會被誤認為價格），必須按 | 分欄
+  const dateRe = /\d{1,2}\.\s*[A-Za-z]+\s*\d{4}/;
+  for (const line of String(text).split(/\r?\n/)) {
+    if (!dateRe.test(line) || !line.includes("|")) continue;
+    const cells = line.split("|").map((c) => c.trim()).filter((c) => c !== "");
+    const dateIdx = cells.findIndex((c) => dateRe.test(c));
+    if (dateIdx < 0 || cells.length < dateIdx + 3) continue;
+    const threeMonth = Number(cells[dateIdx + 2].replace(/,/g, ""));
+    if (Number.isFinite(threeMonth) && threeMonth > 0) {
+      return { value: threeMonth, date: cells[dateIdx], source: "westmetall-jina", unit: "USD/t" };
+    }
+  }
+  throw new Error("Jina 代理內容解析失敗（找不到資料列）");
+}
+
 // 對外介面：依有無 API key 與是否重試階段決定來源順序
+// 順序：metals.dev（有 key 且非重試）→ Westmetall 直連（重試 1 次）→ Jina 代理
 async function fetchLme({ isRetry = false } = {}) {
   const apiKey = process.env.METALS_DEV_KEY;
-  // 有 key 且非重試階段 → metals.dev 首選、Westmetall 備援
+  // 有 key 且非重試階段 → metals.dev 首選
   if (apiKey && !isRetry) {
     try {
       return await fetchLmeFromMetalsDev(apiKey);
@@ -66,8 +93,17 @@ async function fetchLme({ isRetry = false } = {}) {
       console.warn("[LME] metals.dev 失敗，改用 Westmetall：", e.message);
     }
   }
-  // 無 key 或重試階段 → 直接 Westmetall
-  return await fetchLmeFromWestmetall();
+  try {
+    return await fetchLmeFromWestmetall();
+  } catch (e) {
+    console.warn("[LME] Westmetall 直連失敗，改走 Jina 代理：", e.message);
+    return await fetchLmeFromWestmetallViaJina();
+  }
 }
 
-module.exports = { fetchLme, fetchLmeFromWestmetall, fetchLmeFromMetalsDev };
+module.exports = {
+  fetchLme,
+  fetchLmeFromWestmetall,
+  fetchLmeFromMetalsDev,
+  fetchLmeFromWestmetallViaJina
+};
