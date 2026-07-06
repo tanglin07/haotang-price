@@ -1,12 +1,15 @@
 # 每日自動更新報價並部署 GitHub Pages（docs/）
-# 排程時間為 UTC：23:00 UTC = 台北 07:00、01:00 UTC = 台北 09:00（補抓一次保險）
+# 排程時間為 UTC（台北 = UTC+8）：23:18 UTC = 台北 07:18、01:24 = 09:24、03:36 = 11:36
+# 注意：GitHub 對「整點」排程在尖峰時段會延遲或跳過（官方文件明載），
+#       因此刻意選冷門分鐘數，並排三班確保每天至少成功一次
 # 也可在 GitHub 網頁 Actions 分頁手動觸發（Run workflow）＝「手動更新價格」
 name: 每日更新報價
 
 on:
   schedule:
-    - cron: "0 23 * * *"
-    - cron: "0 1 * * *"
+    - cron: "18 23 * * *"
+    - cron: "24 1 * * *"
+    - cron: "36 3 * * *"
   workflow_dispatch:
 
 permissions:

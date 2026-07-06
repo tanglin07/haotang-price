@@ -19,12 +19,22 @@ async function fetchLmeFromMetalsDev(apiKey) {
 
 // Westmetall：表格欄位依序為 日期 | Cash-Settlement | 3-month | stock
 // 取第一個「第一欄像日期、第三欄為數字」的資料列，第 3 欄即為 3-month 價格
-async function fetchLmeFromWestmetall() {
+// 逾時 30 秒 + 失敗重試一次（實測 GitHub Actions 主機連 Westmetall 偶發 15 秒逾時）
+async function fetchLmeFromWestmetall(attempt = 1) {
   const url = "https://www.westmetall.com/en/markdaten.php?action=table&field=LME_Al_cash";
-  const { data: html } = await axios.get(url, {
-    timeout: 15000,
-    headers: { "User-Agent": "Mozilla/5.0" }
-  });
+  let html;
+  try {
+    ({ data: html } = await axios.get(url, {
+      timeout: 30000,
+      headers: { "User-Agent": "Mozilla/5.0" }
+    }));
+  } catch (e) {
+    if (attempt < 2) {
+      console.warn(`[LME] Westmetall 第 ${attempt} 次失敗（${e.message}），重試中`);
+      return fetchLmeFromWestmetall(attempt + 1);
+    }
+    throw e;
+  }
   const $ = cheerio.load(html);
   let value = null;
   let dateTxt = null;
