@@ -121,18 +121,20 @@
       const errEl = document.getElementById("error");
       try {
         // 先嘗試伺服器 API（本機/VPS 部署）；失敗改讀靜態 JSON（GitHub Pages 部署）
+        // 注意：GitHub Pages 對所有檔案設 10 分鐘 CDN/瀏覽器快取，
+        // 必須加 no-store 與唯一化 query string，否則手動更新後最多 10 分鐘看不到新資料
         let data = null;
         try {
-          const resp = await fetch("/api/prices");
+          const resp = await fetch("/api/prices", { cache: "no-store" });
           if (!resp.ok) throw new Error("api unavailable");
           data = await resp.json();
         } catch {
-          const resp2 = await fetch("prices-latest.json");
+          const resp2 = await fetch("prices-latest.json?t=" + Date.now(), { cache: "no-store" });
           if (!resp2.ok) throw new Error("尚無報價資料");
           data = await resp2.json();
-          // 靜態版：無伺服器可即時重抓，隱藏更新按鈕；PDF 改讀預先產生的檔案
+          // 靜態版：無伺服器可即時重抓，隱藏更新按鈕；PDF 改讀預先產生的檔案（同樣加時戳防快取）
           document.getElementById("btn-refresh").hidden = true;
-          document.getElementById("btn-pdf").href = "quote.pdf";
+          document.getElementById("btn-pdf").href = "quote.pdf?t=" + Date.now();
         }
 
         // 更新時間（台灣時間）
