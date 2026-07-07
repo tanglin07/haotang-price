@@ -21,42 +21,68 @@
   </header>
 
   <main>
-    <div class="board-head">
-      <div class="board-top">
-        <p id="updated" class="updated">載入中…</p>
-        <div class="actions">
-          <button id="btn-refresh" class="btn" type="button">更新價格</button>
-          <a id="btn-pdf" class="btn btn-primary" href="/api/quote.pdf" download>下載報價單 PDF</a>
-        </div>
+    <!-- 頂列：更新時間 + 動作按鈕 -->
+    <div class="board-top">
+      <p id="updated" class="updated">載入中…</p>
+      <div class="actions">
+        <button id="btn-refresh" class="btn" type="button">更新價格</button>
+        <a id="btn-pdf" class="btn btn-primary" href="/api/quote.pdf" download>
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m6 11 6 5 6-5"/><path d="M4 21h16"/></svg>
+          下載報價 PDF
+        </a>
       </div>
-      <p class="board-labels" aria-hidden="true">
-        <span class="lab-buy">收購價 <i>元/kg</i></span>
-        <span class="lab-quote">報價 <i>元/kg</i></span>
-      </p>
     </div>
 
-    <ul id="price-list" class="price-list" hidden></ul>
+    <!-- 報價卡：資訊列 + 四欄清單 -->
+    <section class="price-card">
+      <p class="notice">
+        <svg class="ic ic-green" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></svg>
+        基準來源不同，請留意標籤
+      </p>
 
-    <!-- 行情依據：低調小字，不干擾報價主表 -->
-    <p id="basis" class="basis" hidden></p>
+      <div class="cols" aria-hidden="true">
+        <span class="col-item">品項<i>廢鋁分類</i></span>
+        <span class="col-base">今日基準價<i>元 / 公斤</i></span>
+        <span class="col-src">基準來源<i>價格依據</i></span>
+        <span class="col-quote">對外報價<i>元 / 公斤</i></span>
+      </div>
+
+      <ul id="price-list" class="price-list" hidden></ul>
+    </section>
+
+    <!-- 行情依據卡 -->
+    <section id="basis" class="basis-card" hidden></section>
+
+    <!-- 聯絡卡 -->
+    <section class="contact-card">
+      <span class="round-ic">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 2 .7 2.9a2 2 0 0 1-.5 2.1L8 10a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c.9.3 1.9.6 2.9.7a2 2 0 0 1 1.7 2z"/></svg>
+      </span>
+      <div>
+        <p class="card-title">聯絡我們</p>
+        <p class="contact-line">
+          電話／LINE：
+          <a href="tel:0910420956">0910-420-956</a>
+          <span class="contact-sep">、</span>
+          <a href="tel:0933295454">0933-295-454</a>
+        </p>
+      </div>
+    </section>
+
+    <!-- 免責卡 -->
+    <section class="disclaimer-card">
+      <span class="round-ic">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5z"/><path d="m9 12 2 2 4-4"/></svg>
+      </span>
+      <ul>
+        <li>本頁價格為參考資訊，實際收購價依現場與當日確認為準。</li>
+        <li>基準來源可能為熔煉廠價或 LME 試算，請依標籤辨識。</li>
+        <li>價格依 LME、匯率及市場行情每日變動。</li>
+      </ul>
+    </section>
 
     <p id="error" class="error" hidden></p>
   </main>
-
-  <footer>
-    <!-- 聯絡方式：手機點號碼可直接撥打 -->
-    <div class="contact">
-      <p class="contact-title">聯絡我們</p>
-      <p class="contact-line">
-        電話／LINE：
-        <a href="tel:0910420956">0910-420-956</a>
-        <span class="contact-sep">・</span>
-        <a href="tel:0933295454">0933-295-454</a>
-      </p>
-    </div>
-    <p>本表價格僅供參考，實際收購價以現場過磅與當日確認為準。<br>
-    價格依 LME 國際鋁價、匯率及市場行情每日變動。</p>
-  </footer>
 
   <script>
     // 各品項對應照片（public/images/，來源與授權見 images/CREDITS.txt）
@@ -68,7 +94,26 @@
       "生鋁屑": "images/item-raw.jpg"
     };
 
-    // 讀取 /api/prices 並渲染報價列表與行情依據列
+    // 基準來源標籤：純顯示用、照老闆 2026-07-07 指定分配，與計價公式無關
+    const SOURCE_LABEL = {
+      "鋁骨": "factory",
+      "濁鋁骨": "factory",
+      "6頭鋁屑": "lme",
+      "混合鋁屑": "lme",
+      "生鋁屑": "factory"
+    };
+    const BADGE = {
+      factory: {
+        text: "熔煉廠價",
+        icon: '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 20h20"/><path d="M4 20V9l6 4V9l6 4V4h4v16"/></svg>'
+      },
+      lme: {
+        text: "LME 試算",
+        icon: '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8"/><path d="M8 12h.01M12 12h.01M16 12h.01M8 16h.01M12 16h.01M16 16h.01"/></svg>'
+      }
+    };
+
+    // 讀取 /api/prices 並渲染報價清單與行情依據卡
     async function loadPrices() {
       const updated = document.getElementById("updated");
       const list = document.getElementById("price-list");
@@ -93,7 +138,9 @@
         // 更新時間（台灣時間）
         const dt = new Date(data.updatedAt);
         const pad = (n) => String(n).padStart(2, "0");
-        updated.innerHTML = `<span class="dot" aria-hidden="true"></span>最後更新 ${data.fetchDate}　${pad(dt.getHours())}:${pad(dt.getMinutes())}`;
+        updated.innerHTML =
+          '<span class="round-ic round-ic-sm"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>'
+          + `最後更新　${data.fetchDate} ${pad(dt.getHours())}:${pad(dt.getMinutes())}`;
 
         // 渲染五品項；flag 有值（如「前日參考價」）時淡黃底標註
         list.innerHTML = "";
@@ -106,26 +153,29 @@
             ? `<img class="thumb" src="${img}" alt="${item.name}實物照片" loading="lazy" onerror="this.classList.add('broken')">`
             : `<span class="thumb thumb-empty" aria-hidden="true"></span>`;
           const flagNote = item.flag ? `<span class="flag">⚠ ${item.flag}</span>` : "";
+          const b = BADGE[SOURCE_LABEL[item.name]] || BADGE.lme;
           li.innerHTML = `
             ${photo}
             <span class="name">${item.name}${flagNote}</span>
-            <span class="price buy"><i class="m-label">收購價</i>${item.buy.toFixed(2)}</span>
-            <span class="price quote"><i class="m-label">報價</i>${item.quote.toFixed(2)}</span>`;
+            <span class="price base"><i class="m-label">今日基準價</i>${item.buy.toFixed(2)}</span>
+            <span class="badge badge-${SOURCE_LABEL[item.name] || "lme"}">${b.icon}${b.text}</span>
+            <span class="price quote"><i class="m-label">對外報價</i>${item.quote.toFixed(2)}</span>`;
           list.appendChild(li);
         });
         list.hidden = false;
 
-        // 行情依據：LME 3M + 兩個匯率（台銀即期賣出）
+        // 行情依據卡：LME 3M + 兩個匯率（台銀即期賣出）
         if (data.inputs) {
           const lmeTxt = Number(data.inputs.lme).toLocaleString("en-US");
-          basis.innerHTML =
-            `今日行情依據&ensp;`
-            + `<span class="basis-item">LME 鋁 3 個月 <b>${lmeTxt}</b> 美元/噸</span>`
-            + `<span class="basis-sep">｜</span>`
-            + `<span class="basis-item">美元 <b>${Number(data.inputs.usd).toFixed(2)}</b></span>`
-            + `<span class="basis-sep">｜</span>`
-            + `<span class="basis-item">人民幣 <b>${Number(data.inputs.cny).toFixed(2)}</b></span>`
-            + `<span class="basis-note">（匯率為台銀即期賣出）</span>`;
+          basis.innerHTML = `
+            <span class="basis-head">
+              <span class="round-ic round-ic-sm"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l6-6 4 4 7-8"/><path d="M14 7h6v6"/></svg></span>
+              今日行情依據
+            </span>
+            <span class="basis-item"><span class="basis-label">LME 鋁 3 個月</span><b>${lmeTxt}</b><i>美元/噸</i></span>
+            <span class="basis-item"><span class="cur-ic">$</span><span class="basis-label">美元</span><b>${Number(data.inputs.usd).toFixed(2)}</b></span>
+            <span class="basis-item"><span class="cur-ic">¥</span><span class="basis-label">人民幣</span><b>${Number(data.inputs.cny).toFixed(2)}</b></span>
+            <span class="basis-note">（匯率為台銀<br>即期賣出）</span>`;
           basis.hidden = false;
         }
       } catch (e) {
@@ -136,7 +186,7 @@
     }
     loadPrices();
 
-    // 更新價格按鈕：呼叫 /api/refresh 重新抓取最新資料後重新渲染
+    // 更新價格按鈕：呼叫 /api/refresh 重新抓取最新資料後重新渲染（僅伺服器模式顯示）
     const btnRefresh = document.getElementById("btn-refresh");
     btnRefresh.addEventListener("click", async () => {
       const orig = btnRefresh.textContent;

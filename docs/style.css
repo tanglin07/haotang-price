@@ -1,18 +1,24 @@
-/* 浩堂廢鋁報價 — 簡約現代（參考大畑商事：品項照片＋品名＋價格的清單式報價）
-   白底、大量留白、細邊框卡片、單一橙色點綴；價格為視覺主角，現場手機閱讀優先 */
+/* 浩堂廢鋁報價 — 綠色系四欄介面（依老闆 2026-07-07 提供設計圖改版）
+   白卡＋灰綠底、主綠色數字與圖示、來源標籤 badge、橙色僅保留 PDF 下載鈕 */
 
 :root {
-  --ink: #1c2126;        /* 主文字 */
-  --steel: #66727c;      /* 次要文字 */
-  --faint: #97a2ab;      /* 弱化文字 */
-  --bg: #f7f8f9;         /* 頁面底色：近白 */
+  --green: #2e7d32;       /* 主綠：標題、基準價、圖示、電話 */
+  --green-dark: #1f5c23;
+  --green-soft: #e8f2e8;  /* badge / 圓形圖示底 */
+  --green-line: #c8dcc8;  /* badge 邊框 */
+  --ink: #22292b;         /* 深色文字（對外報價） */
+  --steel: #5f6b6d;       /* 次要文字 */
+  --faint: #93a09c;       /* 弱化文字 */
+  --bg: #eef0ee;          /* 頁面底：灰綠白 */
   --card: #ffffff;
-  --line: #e9edf0;       /* 細分隔線 */
-  --accent: #e07a24;     /* 唯一點綴色（品牌橙） */
-  --stale-bg: #fff8dd;   /* 沿用前日：淡黃底 */
+  --line: #e4e8e4;        /* 卡片邊 / 分隔線 */
+  --accent: #e07a24;      /* 橙：僅 PDF 下載鈕 */
+  --stale-bg: #fff8dd;    /* 沿用前日：淡黃底 */
   --stale-ink: #8a6d00;
   --num-font: "Barlow Condensed", "Arial Narrow", sans-serif;
   --tc-font: "Noto Sans TC", "Microsoft JhengHei", "PingFang TC", sans-serif;
+  /* 四欄 grid：照片 | 品名 | 基準價 | 來源 badge | 對外報價 */
+  --row-cols: 96px 1fr 132px 150px 116px;
 }
 
 * {
@@ -37,87 +43,115 @@ header {
 }
 
 .brand {
-  max-width: 720px;
+  max-width: 860px;
   margin: 0 auto;
-  padding: 22px 20px;
+  padding: 18px 20px;
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 12px;
 }
 
-/* 公司 LOGO（已去背 PNG） */
 .brand-logo {
   height: 46px;
   width: auto;
-  align-self: center;
   flex: none;
 }
 
 header h1 {
-  font-size: 1.65rem;
+  font-size: 1.6rem;
   font-weight: 900;
   letter-spacing: 0.28em;
 }
 
 .brand-sub {
   margin-left: auto;
-  font-size: 0.9rem;
-  color: var(--steel);
-  letter-spacing: 0.12em;
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: 0.1em;
 }
 
 /* ===== 主內容 ===== */
 main {
   flex: 1;
   width: 100%;
-  max-width: 720px;
+  max-width: 860px;
   margin: 0 auto;
-  padding: 28px 16px 8px;
+  padding: 22px 16px 34px;
 }
 
-.board-head {
-  padding: 0 6px 12px;
+/* 圓形綠底圖示 */
+.round-ic {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--green-soft);
+  color: var(--green);
+  flex: none;
 }
 
+.round-ic-sm {
+  width: 30px;
+  height: 30px;
+}
+
+.ic-green {
+  color: var(--green);
+  flex: none;
+}
+
+/* ===== 頂列：更新時間 + 按鈕 ===== */
 .board-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
   flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 10px;
+  padding: 4px 4px 16px;
 }
 
-/* ===== 操作按鈕：更新價格 / 下載報價單 PDF ===== */
+.updated {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: 0.05em;
+}
+
 .actions {
   display: flex;
-  gap: 8px;
+  gap: 10px;
 }
 
 .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   font-family: var(--tc-font);
-  font-size: 0.88rem;
-  font-weight: 500;
+  font-size: 0.95rem;
+  font-weight: 700;
   letter-spacing: 0.06em;
-  color: var(--steel);
-  background: var(--card);
-  border: 1px solid var(--line);
+  padding: 11px 18px;
   border-radius: 10px;
-  padding: 8px 14px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--steel);
   cursor: pointer;
   text-decoration: none;
-  line-height: 1;
-  transition: border-color 0.15s, color 0.15s, background 0.15s;
 }
 
-.btn:hover,
-.btn:focus-visible {
-  border-color: var(--steel);
-  color: var(--ink);
+.btn:hover {
+  border-color: var(--green-line);
+  color: var(--green);
 }
 
 .btn:disabled {
-  opacity: 0.55;
+  opacity: 0.6;
   cursor: default;
 }
 
@@ -127,73 +161,84 @@ main {
   color: #fff;
 }
 
-.btn-primary:hover,
-.btn-primary:focus-visible {
-  background: #c96a1a;
-  border-color: #c96a1a;
+.btn-primary:hover {
+  background: #cf6d1a;
   color: #fff;
 }
 
-.updated {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.9rem;
-  color: var(--steel);
-  letter-spacing: 0.04em;
+.btn:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 2px;
 }
 
-.dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--accent);
-  flex: none;
-}
-
-/* 欄位標籤（對齊右側兩個價格欄） */
-.board-labels {
-  display: flex;
-  justify-content: flex-end;
-  gap: 16px;           /* 與清單列的欄距一致 */
-  padding-right: 14px; /* 補清單列右內距差，使標籤與數字右緣對齊 */
-  font-size: 0.8rem;
-  color: var(--faint);
-  letter-spacing: 0.08em;
-}
-
-.board-labels i {
-  font-style: normal;
-  font-size: 0.7rem;
-  margin-left: 2px;
-}
-
-.lab-buy {
-  width: 118px;
-  text-align: right;
-}
-
-.lab-quote {
-  width: 96px;
-  text-align: right;
-}
-
-/* ===== 報價清單：照片＋品名＋收購價＋報價 ===== */
-.price-list {
-  list-style: none;
+/* ===== 報價卡 ===== */
+.price-card {
   background: var(--card);
   border: 1px solid var(--line);
   border-radius: 16px;
+  box-shadow: 0 1px 2px rgba(34, 41, 43, 0.04), 0 8px 24px rgba(34, 41, 43, 0.05);
   overflow: hidden;
-  box-shadow: 0 1px 2px rgba(28, 33, 38, 0.04), 0 8px 24px rgba(28, 33, 38, 0.05);
+}
+
+/* 資訊列 */
+.notice {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 14px 20px;
+  font-size: 0.92rem;
+  color: var(--steel);
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--line);
+}
+
+/* 欄位表頭 */
+.cols {
+  display: grid;
+  grid-template-columns: var(--row-cols);
+  gap: 14px;
+  align-items: end;
+  padding: 14px 20px 12px 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.cols span {
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: 0.08em;
+  text-align: center;
+}
+
+.cols i {
+  display: block;
+  font-style: normal;
+  font-size: 0.74rem;
+  font-weight: 400;
+  color: var(--faint);
+  margin-top: 3px;
+  letter-spacing: 0.06em;
+}
+
+.col-item {
+  grid-column: 1 / 3; /* 橫跨照片＋品名兩欄 */
+}
+
+.col-base { grid-column: 3; }
+.col-src  { grid-column: 4; }
+.col-quote { grid-column: 5; }
+
+/* 報價清單 */
+.price-list {
+  list-style: none;
 }
 
 .price-list li {
   display: grid;
-  grid-template-columns: 88px 1fr 118px 96px;
+  grid-template-columns: var(--row-cols);
   align-items: center;
-  gap: 16px;
-  padding: 14px 20px 14px 14px;
+  gap: 14px;
+  padding: 13px 20px 13px 14px;
   border-bottom: 1px solid var(--line);
 }
 
@@ -201,10 +246,9 @@ main {
   border-bottom: none;
 }
 
-/* 品項照片：圓角縮圖 */
 .thumb {
-  width: 88px;
-  height: 66px;
+  width: 96px;
+  height: 68px;
   object-fit: cover;
   border-radius: 10px;
   display: block;
@@ -215,35 +259,77 @@ main {
   visibility: hidden; /* 圖片載入失敗時保留版位不破版 */
 }
 
+/* 品名：前置綠色豎線 */
 .name {
-  font-size: 1.15rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.12rem;
   font-weight: 700;
   letter-spacing: 0.06em;
+  flex-wrap: wrap;
 }
 
-/* 價格：等寬壓縮數字；收購價為主角 */
+.name::before {
+  content: "";
+  width: 4px;
+  height: 1.15em;
+  border-radius: 2px;
+  background: var(--green);
+  flex: none;
+}
+
+/* 價格：等寬壓縮數字 */
 .price {
   font-family: var(--num-font);
   font-variant-numeric: tabular-nums;
-  text-align: right;
+  text-align: center;
   white-space: nowrap;
   line-height: 1;
 }
 
-.price.buy {
-  font-size: 2.1rem;
+.price.base {
+  font-size: 2.15rem;
   font-weight: 600;
+  color: var(--green);
 }
 
 .price.quote {
-  font-size: 1.5rem;
-  font-weight: 500;
-  color: var(--steel);
+  font-size: 1.9rem;
+  font-weight: 600;
+  color: var(--ink);
 }
 
-/* 手機用的小標籤（桌面隱藏，改由表頭欄位標籤呈現） */
+/* 手機用價格小標籤（桌面隱藏） */
 .m-label {
   display: none;
+}
+
+/* 來源 badge */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  justify-self: center;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 8px 14px;
+  border-radius: 9px;
+  white-space: nowrap;
+}
+
+.badge-factory {
+  background: var(--green-soft);
+  border: 1px solid var(--green-line);
+  color: var(--green-dark);
+}
+
+.badge-lme {
+  background: var(--card);
+  border: 1px solid #cfd6d2;
+  color: var(--steel);
 }
 
 /* 列進場：由下淡入（尊重減少動態偏好） */
@@ -265,89 +351,118 @@ main {
 
 .flag {
   display: block;
+  width: 100%;
   font-size: 0.76rem;
   font-weight: 400;
   color: var(--stale-ink);
-  margin-top: 3px;
+  margin-left: 14px;
 }
 
-/* ===== 行情依據列：低調小字 ===== */
-.basis {
+/* ===== 行情依據卡 ===== */
+.basis-card {
   margin-top: 16px;
-  text-align: center;
-  font-size: 0.82rem;
-  color: var(--faint);
-  letter-spacing: 0.03em;
-  line-height: 1.9;
-}
-
-.basis b {
-  font-family: var(--num-font);
-  font-size: 0.98rem;
-  font-weight: 600;
-  color: var(--steel);
-}
-
-.basis-item {
-  white-space: nowrap;
-  margin: 0 3px;
-}
-
-.basis-sep {
-  color: #ccd3d9;
-  margin: 0 2px;
-}
-
-.basis-note {
-  display: inline-block;
-  color: var(--faint);
-}
-
-.error {
-  text-align: center;
-  color: #a33;
-  font-size: 1.1rem;
-  padding: 48px 0;
-}
-
-/* ===== 頁尾：聯絡方式 + 免責 ===== */
-footer {
-  text-align: center;
-  font-size: 0.8rem;
-  color: var(--faint);
-  line-height: 1.8;
-  padding: 24px 16px 32px;
-}
-
-.contact {
-  max-width: 720px;
-  margin: 0 auto 18px;
-  padding: 16px;
   background: var(--card);
   border: 1px solid var(--line);
   border-radius: 14px;
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
 }
 
-.contact-title {
-  font-size: 0.82rem;
-  letter-spacing: 0.3em;
-  text-indent: 0.3em;
-  color: var(--faint);
-  margin-bottom: 4px;
+.basis-head {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: 0.06em;
 }
 
-.contact-line {
-  font-size: 1.02rem;
+.basis-item {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  border-left: 1px solid var(--line);
+  padding-left: 14px;
+}
+
+.basis-label {
+  font-size: 0.88rem;
   color: var(--steel);
   letter-spacing: 0.04em;
 }
 
-/* 電話號碼：可點擊撥打，數字用等寬字體、橙色點綴 */
+.basis-item b {
+  font-family: var(--num-font);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.basis-item i {
+  font-style: normal;
+  font-size: 0.76rem;
+  color: var(--faint);
+}
+
+/* 幣別小圓圖示 */
+.cur-ic {
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--green-soft);
+  color: var(--green);
+  font-size: 0.9rem;
+  font-weight: 700;
+  flex: none;
+}
+
+.basis-note {
+  font-size: 0.76rem;
+  color: var(--faint);
+  line-height: 1.5;
+  letter-spacing: 0.04em;
+}
+
+/* ===== 聯絡卡 / 免責卡 ===== */
+.contact-card,
+.disclaimer-card {
+  margin-top: 16px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.card-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  margin-bottom: 3px;
+}
+
+.contact-line {
+  font-size: 1.05rem;
+  color: var(--steel);
+  letter-spacing: 0.04em;
+}
+
 .contact-line a {
   font-family: var(--num-font);
-  font-size: 1.35rem;
+  font-size: 1.45rem;
   font-weight: 600;
-  color: var(--accent);
+  color: var(--green);
   text-decoration: none;
   white-space: nowrap;
 }
@@ -359,68 +474,108 @@ footer {
 }
 
 .contact-sep {
-  color: var(--line);
-  margin: 0 6px;
+  color: var(--faint);
+  margin: 0 4px;
+}
+
+.disclaimer-card {
+  align-items: flex-start;
+}
+
+.disclaimer-card ul {
+  list-style: disc;
+  padding-left: 1.2em;
+  font-size: 0.86rem;
+  color: var(--steel);
+  line-height: 2;
+  letter-spacing: 0.04em;
+}
+
+.error {
+  text-align: center;
+  color: #a33;
+  font-size: 1.1rem;
+  padding: 48px 0;
 }
 
 /* ===== 手機（現場主要使用情境）===== */
-@media (max-width: 560px) {
-  main {
-    padding-top: 20px;
+@media (max-width: 640px) {
+  .brand {
+    padding: 14px 16px;
   }
-  .board-labels {
+  header h1 {
+    font-size: 1.35rem;
+  }
+  .brand-sub {
+    font-size: 0.85rem;
+  }
+  .cols {
     display: none; /* 小螢幕改在每列內顯示小標籤 */
   }
   .price-list li {
-    grid-template-columns: 64px 1fr auto;
+    grid-template-columns: 72px 1fr auto;
     grid-template-areas:
-      "photo name  buy"
-      "photo quote buy";
-    row-gap: 2px;
+      "photo name  base"
+      "photo badge quote";
+    row-gap: 6px;
     gap: 12px;
-    padding: 12px 14px 12px 12px;
+    padding: 12px 14px;
   }
   .thumb {
     grid-area: photo;
-    width: 64px;
-    height: 64px;
-    border-radius: 10px;
+    width: 72px;
+    height: 72px;
   }
   .name {
     grid-area: name;
-    font-size: 1.05rem;
+    font-size: 1.02rem;
     align-self: end;
   }
-  .price.buy {
-    grid-area: buy;
-    font-size: 2rem;
-    align-self: center;
+  .badge {
+    grid-area: badge;
+    justify-self: start;
+    align-self: start;
+    font-size: 0.78rem;
+    padding: 5px 10px;
+    gap: 5px;
+  }
+  .price.base {
+    grid-area: base;
+    font-size: 1.9rem;
+    text-align: right;
+    align-self: end;
   }
   .price.quote {
     grid-area: quote;
-    font-size: 1.05rem;
-    text-align: left;
+    font-size: 1.25rem;
+    color: var(--steel);
+    text-align: right;
     align-self: start;
   }
   /* 手機顯示小標籤區分兩個價格 */
   .m-label {
-    display: inline;
+    display: block;
     font-style: normal;
     font-family: var(--tc-font);
-    font-size: 0.7rem;
+    font-size: 0.68rem;
     color: var(--faint);
-    margin-right: 6px;
     letter-spacing: 0.08em;
-  }
-  .price.buy .m-label {
-    display: block;
+    margin-bottom: 3px;
     text-align: right;
-    margin: 0 0 3px;
   }
-  .basis-sep {
-    display: none; /* 小螢幕以項目換行取代分隔線 */
+  .basis-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
   }
-  .basis-note {
-    display: block;
+  .basis-item {
+    border-left: none;
+    padding-left: 0;
+  }
+  .basis-note br {
+    display: none; /* 手機不需要強制換行 */
+  }
+  .contact-line a {
+    font-size: 1.25rem;
   }
 }
