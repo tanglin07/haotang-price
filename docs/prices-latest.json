@@ -1,46 +1,46 @@
 {
-  "fetchDate": "2026-07-08",
-  "updatedAt": "2026-07-08T14:14:45+08:00",
+  "fetchDate": "2026-07-09",
+  "updatedAt": "2026-07-09T09:04:14+08:00",
   "inputs": {
-    "lme": 3127.5,
-    "usd": 32.14,
-    "cny": 4.743,
+    "lme": 3147,
+    "usd": 32.1,
+    "cny": 4.735,
     "baotai": 19300
   },
   "sources": {
-    "lme": "westmetall-jina",
+    "lme": "westmetall",
     "fx": "bot-csv",
     "baotai": "baotai"
   },
   "items": [
     {
       "name": "鋁骨",
-      "buy": 95.49,
-      "quote": 90.49,
+      "buy": 95.97,
+      "quote": 90.97,
       "flag": null
     },
     {
       "name": "濁鋁骨",
-      "buy": 80.21,
-      "quote": 75.21,
+      "buy": 80.61,
+      "quote": 75.61,
       "flag": null
     },
     {
       "name": "6頭鋁屑",
-      "buy": 65.34,
-      "quote": 60.34,
+      "buy": 65.66,
+      "quote": 60.66,
       "flag": null
     },
     {
       "name": "混合鋁屑",
-      "buy": 58.3,
-      "quote": 53.3,
+      "buy": 58.59,
+      "quote": 53.59,
       "flag": null
     },
     {
       "name": "生鋁屑",
-      "buy": 62.53,
-      "quote": 57.53,
+      "buy": 62.41,
+      "quote": 57.41,
       "flag": null
     }
   ],
