@@ -1,6 +1,6 @@
 {
   "fetchDate": "2026-07-18",
-  "updatedAt": "2026-07-18T08:12:28+08:00",
+  "updatedAt": "2026-07-18T12:17:17+08:00",
   "inputs": {
     "lme": 3146.5,
     "usd": 32.365,
@@ -10,7 +10,7 @@
   "sources": {
     "lme": "westmetall",
     "fx": "bot-csv",
-    "baotai": "baotai"
+    "baotai": "baotai-jina"
   },
   "items": [
     {
