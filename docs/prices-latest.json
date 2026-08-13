@@ -1,10 +1,10 @@
 {
   "fetchDate": "2026-08-13",
-  "updatedAt": "2026-08-13T11:33:43+08:00",
+  "updatedAt": "2026-08-13T13:17:53+08:00",
   "inputs": {
     "lme": 3308.5,
-    "usd": 32.215,
-    "cny": 4.793,
+    "usd": 32.22,
+    "cny": 4.794,
     "baotai": 19300
   },
   "sources": {
@@ -15,32 +15,32 @@
   "items": [
     {
       "name": "鋁骨",
-      "buy": 101.25,
-      "quote": 96.25,
+      "buy": 101.27,
+      "quote": 96.27,
       "flag": null
     },
     {
       "name": "濁鋁骨",
-      "buy": 85.05,
-      "quote": 80.05,
+      "buy": 85.07,
+      "quote": 80.07,
       "flag": null
     },
     {
       "name": "6頭鋁屑",
-      "buy": 69.28,
-      "quote": 64.28,
+      "buy": 69.29,
+      "quote": 64.29,
       "flag": null
     },
     {
       "name": "混合鋁屑",
-      "buy": 61.82,
-      "quote": 56.82,
+      "buy": 61.83,
+      "quote": 56.83,
       "flag": null
     },
     {
       "name": "生鋁屑",
-      "buy": 63.3,
-      "quote": 58.3,
+      "buy": 63.32,
+      "quote": 58.32,
       "flag": null
     }
   ],
