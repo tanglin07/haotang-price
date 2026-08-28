@@ -1,16 +1,16 @@
 {
   "fetchDate": "2026-08-28",
-  "updatedAt": "2026-08-28T20:57:48+08:00",
+  "updatedAt": "2026-08-28T23:35:27+08:00",
   "inputs": {
     "lme": 3216,
     "usd": 31.685,
-    "cny": 4.735,
+    "cny": 4.731,
     "baotai": 19200
   },
   "sources": {
     "lme": "westmetall",
     "fx": "bot-csv",
-    "baotai": "baotai-jina"
+    "baotai": "baotai"
   },
   "items": [
     {
@@ -39,8 +39,8 @@
     },
     {
       "name": "生鋁屑",
-      "buy": 62.03,
-      "quote": 57.03,
+      "buy": 61.97,
+      "quote": 56.97,
       "flag": null
     }
   ],
