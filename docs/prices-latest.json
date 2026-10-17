@@ -1,11 +1,11 @@
 {
   "fetchDate": "2026-10-17",
-  "updatedAt": "2026-10-17T09:20:57+08:00",
+  "updatedAt": "2026-10-17T13:40:07+08:00",
   "inputs": {
     "lme": 3012,
     "usd": 32.395,
     "cny": 4.865,
-    "baotai": 18700
+    "baotai": 18900
   },
   "sources": {
     "lme": "westmetall",
@@ -39,8 +39,8 @@
     },
     {
       "name": "生鋁屑",
-      "buy": 62.08,
-      "quote": 57.08,
+      "buy": 62.86,
+      "quote": 57.86,
       "flag": null
     }
   ],
